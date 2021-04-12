@@ -1,3 +1,4 @@
+// Definitions 
 var LEFT = 0;
 var RIGHT = 1;
 var UP = 2;
@@ -5,6 +6,7 @@ var DOWN = 3;
 
 const pi = 3.14159265;
 
+// Variable declarations
 let scene, camera, renderer;
 
 let fighter, background, textSprite;
@@ -14,6 +16,7 @@ const coins = new Array();
 
 let gameStart = false, startUp;
 
+// Helper class to handle input
 var Key = {
     _pressed: {},
     
@@ -37,13 +40,14 @@ var Key = {
   };
 
 
+// Helper function that invokes the gltf loader
 function loadModel(url) {
 	return new Promise(resolve => {
 		new THREE.GLTFLoader().load(url, resolve);
 	});
 }
 
-
+// Makes the game responsive
 function onWindowResize() {
     camera.aspect = document.documentElement.clientWidth / document.documentElement.clientHeight;
     camera.updateProjectionMatrix();
@@ -53,6 +57,7 @@ function onWindowResize() {
 
 window.addEventListener('resize', onWindowResize, false);
 
+// Background class to generate star field terrain
 class Background {
     constructor() {
         this.stars = new Array();
@@ -71,6 +76,7 @@ class Background {
             this.stars.push(star);
         }
     }
+    // Function to move the stars
     update() {
         if(this.vel <= 2)
             this.vel += this.acc;
@@ -84,6 +90,7 @@ class Background {
 }
 
 
+// Fighter class that is equivalent to the player
 class Fighter {
     constructor(){
         let p1 = loadModel('../objects/mainFighter.glb').then((result) => {this.model = result.scene});
@@ -106,6 +113,7 @@ class Fighter {
             camera.lookAt(this.model.position);
         });
     }
+    // Handles fighter movement
     move(dir) {
         let newPos = new THREE.Vector3(this.model.position.x,
             this.model.position.y,
@@ -129,6 +137,7 @@ class Fighter {
         this.model.position.set(newPos.x, newPos.y, newPos.z);
     }
     
+    // Master function that converts keypress to movement and updates lasers
     update() {
         if (Key.isDown(Key.UP)) this.move(UP);
         if (Key.isDown(Key.LEFT)) this.move(LEFT);
@@ -154,6 +163,7 @@ class Fighter {
 
       };
     
+    // Creates new lasers after cooldown 
     shoot() {
         if(new Date().getTime() - this.bullet.lastShot < this.bullet.cooldown)
             return;
@@ -180,6 +190,7 @@ class Fighter {
         scene.add(shot);
     }
 
+    // Checks if the fighter is within the playable area 
     checkBounds(x, y){
         var intersections = 0;
         var ss;
@@ -216,7 +227,7 @@ window.addEventListener('keyup', function(event) { Key.onKeyup(event); }, false)
 window.addEventListener('keydown', function(event) { Key.onKeydown(event); }, false);
 
 
-
+// Enemy T.I.E fighter class
 class Enemy {
     constructor(type, position, velocity){
         let p1 = loadModel('../objects/enemy1.glb').then((result) => {this.model = result.scene});
@@ -236,6 +247,7 @@ class Enemy {
         };
         this.dead = false;
     }
+    // Moves all the T.I.Es and lasers on screen 
     update(){
         if(this.model != undefined) {
             this.model.position.set(
@@ -259,6 +271,7 @@ class Enemy {
                 this.shoot();
         }
     }
+    // Spawns new lasers if cooldown has elapsed
     shoot(){
         if(this.dead)
             return;
@@ -271,6 +284,7 @@ class Enemy {
             scene.add(laser);
         }
     }
+    // Animating the T.I.E destruction
     kill(){
         this.dead =true;
         this.velocity.y = Math.random() * 0.2 + 0.2;
@@ -292,6 +306,7 @@ class Enemy {
     }
 }
 
+// Coins that generate when an enemy is destroyed
 class Coin {
     constructor(position) {
         let p1 = loadModel('../objects/coin.glb').then((result) => {this.model = result.scene});
@@ -305,6 +320,7 @@ class Coin {
         this.zvel = Math.random() * 0.2 - 0.1;
     }
 
+    // Move and rotate the coin 
     update() {
         this.model.rotation.y += 0.02;
         this.model.position.x += this.xvel;
@@ -314,11 +330,12 @@ class Coin {
 
 
 let lastSpawn = 0;
+// Spawn enemies in randomly generated wave formations
 function spawnEnemies(enemies) {
     if(new Date().getTime() - lastSpawn <= 3000)
         return;
     lastSpawn = new Date().getTime();
-    // Choose diagonal spawn or horizontal spawn
+    
     let x, z, xd, zd;
     if(Math.random() < 0.5){
         x = 20 - Math.random()*10;
@@ -349,6 +366,7 @@ function spawnEnemies(enemies) {
     }
 }
 
+// Handles all the collisions 
 function handleCollisions(fighter, enemies) {
     // Bullet & TIE
     var toDelEnemies = new Array();
@@ -414,8 +432,6 @@ function handleCollisions(fighter, enemies) {
     toDelEnemies.forEach((enemy) => {
         for(var i=0; i<enemies.length; i++){
             if(enemies[i].model == enemy){
-               // scene.remove(enemy);
-                // enemies.splice(i, 1);
                 enemies[i].kill();
             }
         }
@@ -440,6 +456,7 @@ function handleCollisions(fighter, enemies) {
     })
 }
 
+// Updates the positions of all the enemies 
 function enemyUpdate() {
     enemies.forEach((enemy) => {
         enemy.update();
@@ -461,6 +478,8 @@ function enemyUpdate() {
     });
 }
 
+
+// Updates the positions of the coins
 function coinUpdate() {
     var toDel = new Array();
     coins.forEach((coin) => {
@@ -481,13 +500,14 @@ function coinUpdate() {
     });
 }
 
+// Renders the HUD with current info 
 function updateHUD() {
     textSprite.text = `Score: ${fighter.score} \n Health: ${fighter.health}`;
     textSprite.position.set(-37, -6, -40);
     textSprite.fontSize = 1;
 }
 
-
+// A 3 second intro 
 function intro() {
     if(new Date().getTime() - startUp > 3000)
         gameStart = true;
@@ -496,6 +516,7 @@ function intro() {
     textSprite.position.set(0, -6, -30);
 }
 
+// Delete everything from the screen when the game ends 
 function gameOver() {
     if(fighter.model){
         scene.remove(fighter.model);
@@ -529,6 +550,7 @@ function gameOver() {
     scene.add(textSprite2);
 }
 
+// Main game loop 
 function animate() {
     requestAnimationFrame(animate);
 
@@ -558,7 +580,7 @@ function animate() {
     renderer.render(scene, camera);
 }
 
-
+// Initialize the game, camera, fighter etc. 
 function init() {
     scene = new THREE.Scene();
 
