@@ -11,19 +11,23 @@ The game logic and background were created using Javascript and WebGL along with
 ![x-wing](./img/xwing1.png)
 
 *X-wing front view*
+
 ![x-wing](./img/xwing2.png)
 
 *X-wing back view*
+
 ![fighter](./img/fighter1.png)
 
 *TIE fighter front view*
+
 ![fighter](./img/fighter2.png)
 
 *TIE fighter back view*
+
 ![badge](./img/badge.png)
 
 *Collectible badge*
 ### Trailer 
 The trailer for the game can be found [here](https://drive.google.com/file/d/12qKqVKPpSWspb7C11VKPe_hpc_M7AZAy/view?usp=sharing).
 
-*May the force be with you.*
+**May the force be with you.**
