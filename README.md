@@ -9,14 +9,19 @@ Use the ```w a s d``` keys to move around in the world and ```spacebar``` to sho
 ### Implementation Details
 The game logic and background were created using Javascript and WebGL along with the threeJS library (to simplify model loaders and creating shapes quickly). The code for the game can be found in ```/source/main.js```. All the models were made from scratch (heavy inspiration from Star Wars of course) using blender. Since this was my first time experimenting with blender the models are low-poly and don't have too much detail. My further advanced procedural generation experiments using blender can be found [here](https://github.com/Aa-Aanegola/legendary-brocolli). 
 ![x-wing](./img/xwing1.png)
+
 *X-wing front view*
 ![x-wing](./img/xwing2.png)
+
 *X-wing back view*
 ![fighter](./img/fighter1.png)
+
 *TIE fighter front view*
 ![fighter](./img/fighter2.png)
+
 *TIE fighter back view*
 ![badge](./img/badge.png)
+
 *Collectible badge*
 ### Trailer 
 The trailer for the game can be found [here](https://drive.google.com/file/d/12qKqVKPpSWspb7C11VKPe_hpc_M7AZAy/view?usp=sharing).
